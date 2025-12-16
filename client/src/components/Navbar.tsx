@@ -1,9 +1,16 @@
 import { Plane, Building2, Palmtree, CreditCard, Menu, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
+import { useCurrency } from '../context/CurrencyContext';
 
 export default function Navbar() {
   const location = useLocation();
+  const { currency, setCurrency } = useCurrency();
+  
+  const toggleCurrency = () => {
+    setCurrency(currency === 'BDT' ? 'USD' : 'BDT');
+  };
+
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     if (path.includes('?')) {
@@ -51,10 +58,13 @@ export default function Navbar() {
 
           {/* Right Side */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-gray-600 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-transparent hover:border-gray-200">
+            <button 
+              onClick={toggleCurrency}
+              className="hidden sm:flex items-center gap-2 text-gray-600 cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-transparent hover:border-gray-200"
+            >
               <Globe size={18} />
-              <span className="text-sm font-medium">BDT</span>
-            </div>
+              <span className="text-sm font-medium">{currency}</span>
+            </button>
             <button className="btn-primary py-2 px-6 text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all">
               Login
             </button>

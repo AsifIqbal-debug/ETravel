@@ -3,34 +3,36 @@ import Navbar from '../../components/Navbar';
 import SearchWidget from '../../components/SearchWidget';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '../../context/CurrencyContext';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('flight');
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   // Mock Data for different sections
   const popularFlights = [
-    { title: "Cox's Bazar", price: "4,500", img: "https://images.unsplash.com/photo-1599577533036-7c98096b79c3?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Cox%27s%20Bazar" },
-    { title: "Bangkok", price: "22,000", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Bangkok" },
-    { title: "Maldives", price: "65,000", img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Maldives" }
+    { title: "Cox's Bazar", price: 4500, img: "https://images.unsplash.com/photo-1599577533036-7c98096b79c3?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Cox%27s%20Bazar" },
+    { title: "Bangkok", price: 22000, img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Bangkok" },
+    { title: "Maldives", price: 65000, img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Maldives" }
   ];
 
   const popularHotels = [
-    { title: "Royal Tulip Sea Pearl", price: "12,500", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Royal%20Tulip" },
-    { title: "Sayeman Beach Resort", price: "15,000", img: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Sayeman" },
-    { title: "Long Beach Hotel", price: "8,500", img: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Long%20Beach" }
+    { title: "Royal Tulip Sea Pearl", price: 12500, img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Royal%20Tulip" },
+    { title: "Sayeman Beach Resort", price: 15000, img: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Sayeman" },
+    { title: "Long Beach Hotel", price: 8500, img: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=600&auto=format&fit=crop", query: "?type=hotel&location=Long%20Beach" }
   ];
 
   const popularHolidays = [
-    { title: "Bali Escape", price: "85,000", img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Bali" },
-    { title: "Dubai Adventure", price: "95,000", img: "https://images.unsplash.com/photo-1512453979798-5ea932a23518?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Dubai" },
-    { title: "Singapore Delight", price: "75,000", img: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Singapore" }
+    { title: "Bali Escape", price: 85000, img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Bali" },
+    { title: "Dubai Adventure", price: 95000, img: "https://images.unsplash.com/photo-1512453979798-5ea932a23518?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Dubai" },
+    { title: "Singapore Delight", price: 75000, img: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=600&auto=format&fit=crop", query: "?type=holiday&dest=Singapore" }
   ];
 
   const visaPackages = [
-    { title: "Thailand Visa", price: "5,500", img: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=Thailand" },
-    { title: "Dubai Visa", price: "15,000", img: "https://images.unsplash.com/photo-1546412414-e1885259563a?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=United%20Arab%20Emirates" },
-    { title: "Malaysia Visa", price: "6,500", img: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=Malaysia" }
+    { title: "Thailand Visa", price: 5500, img: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=Thailand" },
+    { title: "Dubai Visa", price: 15000, img: "https://images.unsplash.com/photo-1546412414-e1885259563a?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=United%20Arab%20Emirates" },
+    { title: "Malaysia Visa", price: 6500, img: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=600&auto=format&fit=crop", query: "?type=visa&country=Malaysia" }
   ];
 
   const getPopularItems = () => {
@@ -107,7 +109,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
                   <h3 className="text-xl font-bold">{item.title}</h3>
-                  <p className="text-sm opacity-90">Start from BDT {item.price}</p>
+                  <p className="text-sm opacity-90">Start from {formatPrice(item.price as number, 'BDT')}</p>
                 </div>
               </div>
             ))}

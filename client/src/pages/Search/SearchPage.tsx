@@ -6,10 +6,12 @@ import { listHolidays, type Holiday } from '../../services/api/holidays';
 import { listVisas, type Visa } from '../../services/api/visas';
 import { useSearchParams } from 'react-router-dom';
 import { Plane, Clock, MapPin, Star, Check } from 'lucide-react';
+import { useCurrency } from '../../context/CurrencyContext';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'flight';
+  const { formatPrice } = useCurrency();
   
   // State for different results
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -153,10 +155,10 @@ export default function SearchPage() {
                  <div className="w-full md:w-auto text-right border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 flex flex-row md:flex-col items-center md:items-end justify-between">
                    <div>
                      <span className="block text-xs text-gray-500">Price per person</span>
-                     <div className="text-xl font-bold text-primary">
-                       {flight.currency} {flight.price.toLocaleString()}
-                     </div>
-                   </div>
+                    <div className="text-xl font-bold text-primary">
+                      {formatPrice(Number(flight.price), flight.currency || 'BDT')}
+                    </div>
+                  </div>
                    <button className="btn-primary mt-0 md:mt-2 py-2 px-6 text-sm">
                      Book Now
                    </button>
@@ -192,7 +194,7 @@ export default function SearchPage() {
                        <div className="flex justify-between items-end mt-4 pt-4 border-t border-gray-100">
                           <div>
                             <span className="text-xs text-gray-500">Starts from</span>
-                            <div className="text-xl font-bold text-primary">{hotel.currency} {hotel.price.toLocaleString()}</div>
+                            <div className="text-xl font-bold text-primary">{formatPrice(hotel.price, hotel.currency)}</div>
                           </div>
                           <button className="btn-primary py-2 px-6 text-sm">View Details</button>
                        </div>
@@ -223,7 +225,7 @@ export default function SearchPage() {
                        <div className="flex justify-between items-end mt-4 pt-4 border-t border-gray-100">
                           <div>
                             <span className="text-xs text-gray-500">Per person</span>
-                            <div className="text-xl font-bold text-primary">{holiday.currency} {holiday.price.toLocaleString()}</div>
+                            <div className="text-xl font-bold text-primary">{formatPrice(holiday.price, holiday.currency)}</div>
                           </div>
                           <button className="btn-primary py-2 px-6 text-sm">View Package</button>
                        </div>
@@ -257,7 +259,7 @@ export default function SearchPage() {
                        <div className="flex justify-between items-end mt-4 pt-4 border-t border-gray-100">
                           <div>
                             <span className="text-xs text-gray-500">Visa Fee</span>
-                            <div className="text-xl font-bold text-primary">{visa.currency} {visa.price.toLocaleString()}</div>
+                            <div className="text-xl font-bold text-primary">{formatPrice(visa.price, visa.currency)}</div>
                           </div>
                           <button className="btn-primary py-2 px-6 text-sm">Apply Now</button>
                        </div>
