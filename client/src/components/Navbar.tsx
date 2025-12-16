@@ -1,5 +1,4 @@
-import React from 'react';
-import { Plane, Building2, Palmtree, CreditCard, Menu, User, Globe } from 'lucide-react';
+import { Plane, Building2, Palmtree, CreditCard, Menu, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 

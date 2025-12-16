@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import SearchWidget from '../../components/SearchWidget';
 import { motion } from 'framer-motion';

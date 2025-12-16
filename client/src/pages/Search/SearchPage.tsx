@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { listFlights, type Flight } from '../../services/api/flights';
 import { listHotels, type Hotel } from '../../services/api/hotels';
 import { listHolidays, type Holiday } from '../../services/api/holidays';
 import { listVisas, type Visa } from '../../services/api/visas';
 import { useSearchParams } from 'react-router-dom';
-import { Plane, Building2, Palmtree, CreditCard, Clock, MapPin, Star, Check } from 'lucide-react';
+import { Plane, Clock, MapPin, Star, Check } from 'lucide-react';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();

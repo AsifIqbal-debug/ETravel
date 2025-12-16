@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plane, Calendar, Users, MapPin, ArrowRightLeft, Building2, Palmtree, CreditCard, Globe, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,8 +18,8 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   
   // Hotel State
   const [hotelLocation, setHotelLocation] = useState('Cox\'s Bazar');
-  const [checkIn, setCheckIn] = useState('18 Dec 25');
-  const [checkOut, setCheckOut] = useState('20 Dec 25');
+  const [checkIn] = useState('18 Dec 25');
+  const [checkOut] = useState('20 Dec 25');
   
   // Holiday State
   const [holidayDest, setHolidayDest] = useState('Maldives');
