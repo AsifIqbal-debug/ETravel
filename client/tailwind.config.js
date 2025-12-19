@@ -8,9 +8,14 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#28536b',
-          light: '#7ea8be',
-          dark: '#1e3f52'
+          DEFAULT: '#D4AF37', // Gold
+          light: '#F4E5B1',
+          dark: '#996515'
+        },
+        onyx: {
+          DEFAULT: '#0F0F0F',
+          light: '#1A1A1A',
+          lighter: '#2A2A2A'
         },
         secondary: {
           DEFAULT: '#c2948a',
@@ -21,9 +26,13 @@ export default {
           light: '#dcd6c4'
         },
         background: {
-          DEFAULT: '#f6f0ed',
-          dark: '#e8e1dd'
+          DEFAULT: '#0F0F0F',
+          paper: '#1A1A1A'
         }
+      },
+      fontFamily: {
+        serif: ['"Playfair Display"', 'serif'],
+        sans: ['Inter', 'sans-serif'],
       }
     },
   },

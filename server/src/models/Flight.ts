@@ -13,7 +13,17 @@ const flightSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   currency: { type: String, required: true },
   stops: { type: Number, default: 0 },
-  type: { type: String, enum: ['domestic', 'international'], default: 'domestic' }
+  type: { type: String, enum: ['domestic', 'international', 'hajj-umrah'], default: 'domestic' },
+  tripType: { type: [String], default: ['one-way', 'round-trip'] }
+});
+
+flightSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret: any) {
+    ret.id = ret._id;
+    delete ret._id;
+  }
 });
 
 export const Flight = mongoose.model('Flight', flightSchema);

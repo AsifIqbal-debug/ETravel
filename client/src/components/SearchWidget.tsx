@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plane, Calendar, Users, MapPin, ArrowRightLeft, Building2, Palmtree, CreditCard, Globe, FileText } from 'lucide-react';
+import { Plane, Calendar, Users, MapPin, ArrowRightLeft, Building2, Palmtree, CreditCard, Globe, FileText, Bus, Car } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface SearchWidgetProps {
@@ -16,6 +16,16 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   const [flightFrom, setFlightFrom] = useState('Dhaka (DAC)');
   const [flightTo, setFlightTo] = useState('Cox\'s Bazar (CXB)');
   
+  // Transportation State
+  const [transportationSubTab, setTransportationSubTab] = useState<'bus' | 'car'>('bus');
+  
+  // Bus State
+  const [busFrom, setBusFrom] = useState('Dhaka');
+  const [busTo, setBusTo] = useState('Chittagong');
+
+  // Car State
+  const [carLocation, setCarLocation] = useState('Dhaka');
+
   // Hotel State
   const [hotelLocation, setHotelLocation] = useState('Cox\'s Bazar');
   const [checkIn] = useState('18 Dec 25');
@@ -38,6 +48,12 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
     let query = '';
     if (activeTab === 'flight') {
       query = `?type=flight&from=${encodeURIComponent(flightFrom)}&to=${encodeURIComponent(flightTo)}`;
+    } else if (activeTab === 'transportation') {
+      if (transportationSubTab === 'bus') {
+        query = `?type=bus&from=${encodeURIComponent(busFrom)}&to=${encodeURIComponent(busTo)}`;
+      } else {
+        query = `?type=car&location=${encodeURIComponent(carLocation)}`;
+      }
     } else if (activeTab === 'hotel') {
       query = `?type=hotel&location=${encodeURIComponent(hotelLocation)}`;
     } else if (activeTab === 'holiday') {
@@ -49,30 +65,36 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 max-w-5xl mx-auto -mt-24 relative z-10 border border-gray-100">
+    <div className="bg-onyx-light rounded-2xl shadow-xl p-6 max-w-5xl mx-auto -mt-24 relative z-10 border border-white/10">
       {/* Tabs */}
-      <div className="flex gap-4 md:gap-8 border-b border-gray-100 pb-4 mb-6 overflow-x-auto">
+      <div className="flex gap-4 md:gap-8 border-b border-white/10 pb-4 mb-6 overflow-x-auto">
+        <button 
+          onClick={() => setActiveTab('transportation')}
+          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'transportation' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
+        >
+          <Bus size={18} /> Transportation
+        </button>
         <button 
           onClick={() => setActiveTab('flight')}
-          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'flight' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'flight' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
         >
           <Plane size={18} /> Flight
         </button>
         <button 
           onClick={() => setActiveTab('hotel')}
-          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'hotel' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'hotel' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
         >
-          <Building2 size={18} /> Hotel
+          <Building2 size={18} /> Accommodation
         </button>
         <button 
           onClick={() => setActiveTab('holiday')}
-          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'holiday' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'holiday' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
         >
-          <Palmtree size={18} /> Holiday
+          <Palmtree size={18} /> Destination
         </button>
         <button 
           onClick={() => setActiveTab('visa')}
-          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'visa' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`pb-2 text-sm font-semibold flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === 'visa' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-white'}`}
         >
           <CreditCard size={18} /> Visa
         </button>
@@ -81,6 +103,113 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
       {/* Content based on Tab */}
       <div className="space-y-6">
         
+        {/* TRANSPORTATION FORM */}
+        {activeTab === 'transportation' && (
+          <div className="pt-2">
+            {/* Sub Tabs for Bus/Car */}
+            <div className="flex gap-4 mb-6">
+              <button 
+                onClick={() => setTransportationSubTab('bus')}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${transportationSubTab === 'bus' ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-onyx text-gray-300 hover:bg-onyx-lighter'}`}
+              >
+                <Bus size={16} /> Bus
+              </button>
+              <button 
+                onClick={() => setTransportationSubTab('car')}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${transportationSubTab === 'car' ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-onyx text-gray-300 hover:bg-onyx-lighter'}`}
+              >
+                <Car size={16} /> Car Rent
+              </button>
+            </div>
+
+            {/* BUS FORM */}
+            {transportationSubTab === 'bus' && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                 <div className="md:col-span-5 grid grid-cols-[1fr,auto,1fr] gap-2 items-center border border-white/10 rounded-lg p-3 relative group hover:border-primary transition-colors">
+                    <div className="px-2">
+                      <label className="block text-xs text-gray-400 uppercase font-semibold mb-1">From</label>
+                      <input 
+                        type="text" 
+                        value={busFrom}
+                        onChange={(e) => setBusFrom(e.target.value)}
+                        className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
+                      />
+                      <span className="text-xs text-gray-500 block mt-1">Bangladesh</span>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors">
+                      <ArrowRightLeft size={14} />
+                    </div>
+                    <div className="px-2 text-right">
+                      <label className="block text-xs text-gray-400 uppercase font-semibold mb-1">To</label>
+                      <input 
+                        type="text" 
+                        value={busTo}
+                        onChange={(e) => setBusTo(e.target.value)}
+                        className="w-full font-bold text-white bg-transparent outline-none text-right placeholder-gray-600" 
+                      />
+                      <span className="text-xs text-gray-500 block mt-1">Bangladesh</span>
+                    </div>
+                 </div>
+
+                 <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                    <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                      <Calendar size={12} /> Journey Date
+                    </label>
+                    <div className="font-bold text-white">18 Dec 25</div>
+                    <span className="text-xs text-gray-500">Thursday</span>
+                 </div>
+
+                 <div className="md:col-span-2 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                    <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                      <Users size={12} /> Seats
+                    </label>
+                    <div className="font-bold text-white">1 Seat</div>
+                    <span className="text-xs text-gray-500">AC Coach</span>
+                 </div>
+                 
+                 <SearchButton onClick={handleSearch} />
+              </div>
+            )}
+
+            {/* CAR FORM */}
+            {transportationSubTab === 'car' && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                 <div className="md:col-span-4 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+                    <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                      <MapPin size={12} /> Pick-up Location
+                    </label>
+                    <input 
+                      type="text" 
+                      value={carLocation}
+                      onChange={(e) => setCarLocation(e.target.value)}
+                      className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
+                      placeholder="Enter city or location"
+                    />
+                    <span className="text-xs text-gray-500">Bangladesh</span>
+                 </div>
+                 
+                 <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                    <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                      <Calendar size={12} /> Pick-up Date
+                    </label>
+                    <div className="font-bold text-white">18 Dec 25</div>
+                    <span className="text-xs text-gray-500">Wednesday</span>
+                 </div>
+
+                 <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                    <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                      <Calendar size={12} /> Drop-off Date
+                    </label>
+                    <div className="font-bold text-white">20 Dec 25</div>
+                    <span className="text-xs text-gray-500">Friday</span>
+                 </div>
+
+                 <SearchButton onClick={handleSearch} />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* FLIGHT FORM */}
         {activeTab === 'flight' && (
           <>
@@ -92,9 +221,9 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
                   name="tripType" 
                   checked={tripType === 'one'} 
                   onChange={() => setTripType('one')}
-                  className="w-4 h-4 text-primary focus:ring-primary" 
+                  className="w-4 h-4 text-primary focus:ring-primary accent-primary" 
                 />
-                <span className="text-sm font-medium text-gray-700">One Way</span>
+                <span className="text-sm font-medium text-gray-300">One Way</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
@@ -102,9 +231,9 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
                   name="tripType" 
                   checked={tripType === 'round'} 
                   onChange={() => setTripType('round')}
-                  className="w-4 h-4 text-primary focus:ring-primary" 
+                  className="w-4 h-4 text-primary focus:ring-primary accent-primary" 
                 />
-                <span className="text-sm font-medium text-gray-700">Round Trip</span>
+                <span className="text-sm font-medium text-gray-300">Round Trip</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
@@ -112,57 +241,57 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
                   name="tripType" 
                   checked={tripType === 'multi'} 
                   onChange={() => setTripType('multi')}
-                  className="w-4 h-4 text-primary focus:ring-primary" 
+                  className="w-4 h-4 text-primary focus:ring-primary accent-primary" 
                 />
-                <span className="text-sm font-medium text-gray-700">Multi City</span>
+                <span className="text-sm font-medium text-gray-300">Multi City</span>
               </label>
             </div>
 
             {/* Inputs Grid */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               {/* From - To */}
-              <div className="md:col-span-5 grid grid-cols-[1fr,auto,1fr] gap-2 items-center border border-gray-200 rounded-lg p-3 relative group hover:border-primary transition-colors">
+              <div className="md:col-span-5 grid grid-cols-[1fr,auto,1fr] gap-2 items-center border border-white/10 rounded-lg p-3 relative group hover:border-primary transition-colors">
                 <div className="px-2">
-                  <label className="block text-xs text-gray-500 uppercase font-semibold mb-1">From</label>
+                  <label className="block text-xs text-gray-400 uppercase font-semibold mb-1">From</label>
                   <input 
                     type="text" 
                     value={flightFrom}
                     onChange={(e) => setFlightFrom(e.target.value)}
-                    className="w-full font-bold text-gray-900 outline-none placeholder-gray-300" 
+                    className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
                   />
-                  <span className="text-xs text-gray-400 block mt-1">Bangladesh</span>
+                  <span className="text-xs text-gray-500 block mt-1">Bangladesh</span>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-white transition-colors">
                   <ArrowRightLeft size={14} />
                 </div>
                 <div className="px-2 text-right">
-                  <label className="block text-xs text-gray-500 uppercase font-semibold mb-1">To</label>
+                  <label className="block text-xs text-gray-400 uppercase font-semibold mb-1">To</label>
                   <input 
                     type="text" 
                     value={flightTo}
                     onChange={(e) => setFlightTo(e.target.value)}
-                    className="w-full font-bold text-gray-900 outline-none text-right placeholder-gray-300" 
+                    className="w-full font-bold text-white bg-transparent outline-none text-right placeholder-gray-600" 
                   />
-                  <span className="text-xs text-gray-400 block mt-1">Bangladesh</span>
+                  <span className="text-xs text-gray-500 block mt-1">Bangladesh</span>
                 </div>
               </div>
 
               {/* Date */}
-              <div className="md:col-span-3 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+              <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Journey Date
                 </label>
-                <div className="font-bold text-gray-900">18 Dec 25</div>
-                <span className="text-xs text-gray-400">Thursday</span>
+                <div className="font-bold text-white">18 Dec 25</div>
+                <span className="text-xs text-gray-500">Thursday</span>
               </div>
 
               {/* Travelers */}
-              <div className="md:col-span-2 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+              <div className="md:col-span-2 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Users size={12} /> Travelers
                 </label>
-                <div className="font-bold text-gray-900">1 Traveler</div>
-                <span className="text-xs text-gray-400">Economy</span>
+                <div className="font-bold text-white">1 Traveler</div>
+                <span className="text-xs text-gray-500">Economy</span>
               </div>
               
               <SearchButton onClick={handleSearch} />
@@ -173,34 +302,34 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
         {/* HOTEL FORM */}
         {activeTab === 'hotel' && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end pt-4">
-             <div className="md:col-span-4 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
-                  <MapPin size={12} /> City/Hotel
+             <div className="md:col-span-4 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                  <MapPin size={12} /> City/Accommodation
                 </label>
                 <input 
                   type="text" 
                   value={hotelLocation}
                   onChange={(e) => setHotelLocation(e.target.value)}
-                  className="w-full font-bold text-gray-900 outline-none placeholder-gray-300" 
-                  placeholder="Enter city or hotel name"
+                  className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
+                  placeholder="Enter city or accommodation name"
                 />
-                <span className="text-xs text-gray-400">Bangladesh</span>
+                <span className="text-xs text-gray-500">Bangladesh</span>
              </div>
              
-             <div className="md:col-span-3 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Check In
                 </label>
-                <div className="font-bold text-gray-900">{checkIn}</div>
-                <span className="text-xs text-gray-400">Wednesday</span>
+                <div className="font-bold text-white">{checkIn}</div>
+                <span className="text-xs text-gray-500">Wednesday</span>
              </div>
 
-             <div className="md:col-span-3 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-3 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Check Out
                 </label>
-                <div className="font-bold text-gray-900">{checkOut}</div>
-                <span className="text-xs text-gray-400">Friday</span>
+                <div className="font-bold text-white">{checkOut}</div>
+                <span className="text-xs text-gray-500">Friday</span>
              </div>
 
              <SearchButton onClick={handleSearch} />
@@ -210,25 +339,25 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
         {/* HOLIDAY FORM */}
         {activeTab === 'holiday' && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end pt-4">
-             <div className="md:col-span-5 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-5 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <MapPin size={12} /> Destination
                 </label>
                 <input 
                   type="text" 
                   value={holidayDest}
                   onChange={(e) => setHolidayDest(e.target.value)}
-                  className="w-full font-bold text-gray-900 outline-none placeholder-gray-300" 
+                  className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
                   placeholder="Where do you want to go?"
                 />
              </div>
              
-             <div className="md:col-span-5 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-5 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Travel Date
                 </label>
-                <div className="font-bold text-gray-900">Anytime</div>
-                <span className="text-xs text-gray-400">Flexible dates</span>
+                <div className="font-bold text-white">Anytime</div>
+                <span className="text-xs text-gray-500">Flexible dates</span>
              </div>
 
              <SearchButton onClick={handleSearch} />
@@ -238,27 +367,27 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
         {/* VISA FORM */}
         {activeTab === 'visa' && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end pt-4">
-             <div className="md:col-span-5 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-5 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Globe size={12} /> Country
                 </label>
                 <input 
                   type="text" 
                   value={visaCountry}
                   onChange={(e) => setVisaCountry(e.target.value)}
-                  className="w-full font-bold text-gray-900 outline-none placeholder-gray-300" 
+                  className="w-full font-bold text-white bg-transparent outline-none placeholder-gray-600" 
                   placeholder="Enter country name"
                 />
              </div>
              
-             <div className="md:col-span-5 border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
-                <label className="block text-xs text-gray-500 uppercase font-semibold mb-1 flex items-center gap-1">
+             <div className="md:col-span-5 border border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+                <label className="block text-xs text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <FileText size={12} /> Visa Type
                 </label>
                 <select 
                   value={visaType}
                   onChange={(e) => setVisaType(e.target.value)}
-                  className="w-full font-bold text-gray-900 outline-none bg-transparent"
+                  className="w-full font-bold text-white outline-none bg-transparent [&>option]:text-black"
                 >
                   <option>Tourist</option>
                   <option>Business</option>
@@ -281,7 +410,7 @@ function SearchButton({ onClick }: { onClick: () => void }) {
     <div className="md:col-span-2">
       <button 
         onClick={onClick}
-        className="w-full h-[66px] bg-secondary hover:bg-[#a67c73] text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex flex-col items-center justify-center gap-1"
+        className="w-full h-[66px] bg-primary hover:bg-primary-light text-onyx font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex flex-col items-center justify-center gap-1"
       >
         <Plane size={24} className="transform -rotate-45" />
         <span>Search</span>

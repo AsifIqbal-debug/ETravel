@@ -10,4 +10,13 @@ const visaSchema = new mongoose.Schema({
   requiredDocuments: [{ type: String }]
 });
 
+visaSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret: any) {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 export const Visa = mongoose.model('Visa', visaSchema);

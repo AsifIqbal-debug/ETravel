@@ -10,4 +10,13 @@ const hotelSchema = new mongoose.Schema({
   amenities: [{ type: String }]
 });
 
+hotelSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret: any) {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 export const Hotel = mongoose.model('Hotel', hotelSchema);

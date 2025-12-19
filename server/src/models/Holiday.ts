@@ -10,4 +10,13 @@ const holidaySchema = new mongoose.Schema({
   inclusions: [{ type: String }]
 });
 
+holidaySchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret: any) {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
 export const Holiday = mongoose.model('Holiday', holidaySchema);

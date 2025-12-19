@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Navbar from '../../components/Navbar';
 import SearchWidget from '../../components/SearchWidget';
+import Reviews from '../../components/Reviews';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../../context/CurrencyContext';
@@ -12,7 +12,7 @@ export default function HomePage() {
 
   // Mock Data for different sections
   const popularFlights = [
-    { title: "Cox's Bazar", price: 4500, img: "https://images.unsplash.com/photo-1599577533036-7c98096b79c3?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Cox%27s%20Bazar" },
+    { title: "Cox's Bazar", price: 4500, img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Cox%27s%20Bazar" },
     { title: "Bangkok", price: 22000, img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Bangkok" },
     { title: "Maldives", price: 65000, img: "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=600&auto=format&fit=crop", query: "?type=flight&from=Dhaka&to=Maldives" }
   ];
@@ -47,7 +47,7 @@ export default function HomePage() {
   const getSectionTitle = () => {
     switch(activeTab) {
       case 'hotel': return "Popular Hotels";
-      case 'holiday': return "Trending Holiday Packages";
+      case 'holiday': return "Trending Destinations";
       case 'visa': return "Popular Visa Services";
       default: return "Popular Destinations";
     }
@@ -58,36 +58,39 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <div className="min-h-screen bg-onyx">
       
       {/* Hero Section */}
-      <div className="relative h-[450px] bg-gradient-to-r from-primary-dark to-primary overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pattern-dots"></div>
+      <div className="relative h-[600px] overflow-hidden">
+        {/* Hero Background Image */}
+        <img 
+          src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=2000" 
+          alt="Luxury Travel Destination" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-onyx z-0"></div>
         
         <div className="container-custom h-full flex flex-col justify-center items-center text-center pb-20 relative z-10">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md"
+            transition={{ duration: 0.8 }}
+            className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 drop-shadow-lg"
           >
-            Welcome to E Travel
+            Welcome to Nexily
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-white/90 text-lg max-w-2xl drop-shadow-sm"
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="text-white/90 text-lg md:text-xl max-w-2xl drop-shadow-md leading-relaxed"
           >
-            Find the best flights, hotels, and holiday packages for your next journey.
+            Find the best flights, accommodations, and holiday packages for your next journey.
+            Experience the world in cinematic style.
           </motion.p>
-        </div>
-        
-        {/* Abstract Shapes/Clouds for subtle movement */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-           <svg className="relative block w-full h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-              <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-white opacity-20"></path>
-          </svg>
         </div>
       </div>
 
@@ -97,19 +100,22 @@ export default function HomePage() {
         
         {/* Promotional Cards */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">{getSectionTitle()}</h2>
+          <h2 className="text-2xl font-serif font-bold text-white mb-6 flex items-center gap-3">
+            <span className="w-8 h-1 bg-primary rounded-full"></span>
+            {getSectionTitle()}
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {getPopularItems().map((item, i) => (
               <div 
                 key={i} 
                 onClick={() => handleItemClick(item.query)}
-                className="group cursor-pointer rounded-xl overflow-hidden relative h-64 shadow-md hover:shadow-xl transition-all"
+                className="group cursor-pointer rounded-xl overflow-hidden relative h-64 shadow-md hover:shadow-xl transition-all border border-white/10"
               >
                 <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-bold">{item.title}</h3>
-                  <p className="text-sm opacity-90">Start from {formatPrice(item.price as number, 'BDT')}</p>
+                  <h3 className="text-xl font-serif font-bold text-primary-light">{item.title}</h3>
+                  <p className="text-sm opacity-90 text-gray-300">Start from {formatPrice(item.price as number, 'BDT')}</p>
                 </div>
               </div>
             ))}
@@ -125,15 +131,18 @@ export default function HomePage() {
              { title: "24/7 Support", desc: "We are here to help you anytime" },
              { title: "Secure Payment", desc: "100% secure payment methods" }
            ].map((f, i) => (
-             <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center hover:-translate-y-1 transition-transform group">
-               <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl group-hover:bg-primary group-hover:text-white transition-colors">
+             <div key={i} className="bg-onyx-light p-6 rounded-xl border border-white/10 shadow-sm text-center hover:-translate-y-1 transition-transform group hover:border-primary/50">
+               <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl group-hover:bg-primary group-hover:text-onyx transition-colors">
                  {i+1}
                </div>
-               <h3 className="font-bold text-gray-800 mb-2">{f.title}</h3>
-               <p className="text-sm text-gray-500">{f.desc}</p>
+               <h3 className="font-bold text-white mb-2 font-serif">{f.title}</h3>
+               <p className="text-sm text-gray-400">{f.desc}</p>
              </div>
            ))}
         </div>
+
+        {/* Reviews Section */}
+        <Reviews />
       </div>
     </div>
   );

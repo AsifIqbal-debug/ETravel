@@ -37,7 +37,8 @@ const seedFlights = [
     price: 4500,
     currency: 'BDT',
     stops: 0,
-    type: 'domestic'
+    type: 'domestic',
+    tripType: ['one-way', 'round-trip', 'multi-city']
   },
   {
     airline: 'Biman Bangladesh',
@@ -52,7 +53,8 @@ const seedFlights = [
     price: 3200,
     currency: 'BDT',
     stops: 0,
-    type: 'domestic'
+    type: 'domestic',
+    tripType: ['one-way', 'round-trip', 'multi-city']
   },
   {
     airline: 'Novoair',
@@ -67,7 +69,8 @@ const seedFlights = [
     price: 3500,
     currency: 'BDT',
     stops: 0,
-    type: 'domestic'
+    type: 'domestic',
+    tripType: ['one-way', 'round-trip', 'multi-city']
   },
   {
     airline: 'Biman Bangladesh',
@@ -82,7 +85,8 @@ const seedFlights = [
     price: 85000,
     currency: 'BDT',
     stops: 1,
-    type: 'international'
+    type: 'international',
+    tripType: ['one-way', 'round-trip', 'multi-city']
   },
   {
     airline: 'US-Bangla Airlines',
@@ -97,7 +101,24 @@ const seedFlights = [
     price: 22000,
     currency: 'BDT',
     stops: 0,
-    type: 'international'
+    type: 'international',
+    tripType: ['one-way', 'round-trip', 'multi-city']
+  },
+  {
+    airline: 'Saudia',
+    logo: 'SV',
+    origin: 'Dhaka',
+    originCode: 'DAC',
+    destination: 'Jeddah',
+    destinationCode: 'JED',
+    departureTime: '15:00',
+    arrivalTime: '19:30',
+    duration: '7h 30m',
+    price: 95000,
+    currency: 'BDT',
+    stops: 0,
+    type: 'hajj-umrah',
+    tripType: ['one-way', 'round-trip']
   }
 ];
 
@@ -270,41 +291,95 @@ mongoose.connection.once('open', seedDatabase);
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('E Travel API is running');
+  res.send('Nexily API is running');
 });
 
 // Flights API
 app.get('/api/flights', async (req, res) => {
   try {
-    const { from, to } = req.query;
+    const { from, to, category, time, tripType } = req.query;
     let query: any = {};
     
+    if (category) {
+      query.type = category;
+    }
+
+    if (tripType) {
+      query.tripType = { $in: [tripType] };
+    }
+
+    if (time) {
+      // Time ranges:
+      // morning: 06:00 - 11:59
+      // afternoon: 12:00 - 17:59
+      // evening: 18:00 - 23:59
+      // night: 00:00 - 05:59
+      
+      const timeFilter = time as string;
+      if (timeFilter === 'morning') {
+        query.departureTime = { $gte: '06:00', $lt: '12:00' };
+      } else if (timeFilter === 'afternoon') {
+        query.departureTime = { $gte: '12:00', $lt: '18:00' };
+      } else if (timeFilter === 'evening') {
+        query.departureTime = { $gte: '18:00', $lte: '23:59' };
+      } else if (timeFilter === 'night') {
+        query.$or = [
+          { departureTime: { $gte: '00:00', $lt: '06:00' } },
+          { departureTime: { $gte: '24:00' } } // Handling edge cases if any
+        ];
+      }
+    }
+
     if (from) {
       const search = (from as string).replace(/\(.*\)/, '').trim();
-      query.$or = [
-        { origin: { $regex: search, $options: 'i' } },
-        { originCode: { $regex: search, $options: 'i' } }
-      ];
+      const fromQuery = {
+        $or: [
+          { origin: { $regex: search, $options: 'i' } },
+          { originCode: { $regex: search, $options: 'i' } }
+        ]
+      };
+      
+      if (query.$or) {
+        query.$and = [
+          { $or: query.$or }, // Preserve existing $or from time filter (night)
+          fromQuery
+        ];
+        delete query.$or;
+      } else {
+        query = { ...query, ...fromQuery };
+      }
     }
     
     if (to) {
       const search = (to as string).replace(/\(.*\)/, '').trim();
-      if (query.$or) {
-         query.$and = [
-             { $or: query.$or },
-             { $or: [
-                 { destination: { $regex: search, $options: 'i' } },
-                 { destinationCode: { $regex: search, $options: 'i' } }
-             ]}
-         ];
-         delete query.$or;
-      } else {
-          query.$or = [
+      const toQuery = {
+          $or: [
             { destination: { $regex: search, $options: 'i' } },
             { destinationCode: { $regex: search, $options: 'i' } }
-          ];
+          ]
+      };
+
+      if (query.$or) {
+          // If there's an existing $or (from 'night' time filter or 'from' filter if not properly handled),
+          // we need to be careful.
+          // However, my previous logic for 'from' handles merging $or into $and.
+          // If 'from' created an $or (it shouldn't if I structured it right), or 'night' created an $or.
+          
+          // Let's restructure to use $and for all main conditions if multiple exist.
+          if (!query.$and) {
+             query.$and = [];
+          }
+          query.$and.push({ $or: query.$or });
+          delete query.$or;
+          query.$and.push(toQuery);
+      } else if (query.$and) {
+          query.$and.push(toQuery);
+      } else {
+          query = { ...query, ...toQuery };
       }
     }
+    
+    // Cleanup empty $and if it exists (though logic above should prevent it being empty if created)
     
     const flights = await Flight.find(query);
     res.json(flights);
