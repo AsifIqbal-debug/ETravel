@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileText, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function TermsPage() {

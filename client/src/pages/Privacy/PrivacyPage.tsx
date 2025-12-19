@@ -1,4 +1,3 @@
-import React from 'react';
 import { Shield, Lock, Eye } from 'lucide-react';
 
 export default function PrivacyPage() {
