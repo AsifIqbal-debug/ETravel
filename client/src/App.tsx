@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
 import HomePage from './pages/Home/HomePage';
 import SearchPage from './pages/Search/SearchPage';
 import AboutPage from './pages/About/AboutPage';
@@ -6,7 +7,8 @@ import PrivacyPage from './pages/Privacy/PrivacyPage';
 import TermsPage from './pages/Terms/TermsPage';
 import ContactPage from './pages/Contact/ContactPage';
 import FAQPage from './pages/FAQ/FAQPage';
-import Layout from './components/Layout';
+import { CurrencyProvider } from './context/CurrencyContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (

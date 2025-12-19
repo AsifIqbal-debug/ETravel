@@ -29,18 +29,18 @@ const reviews = [
 
 export default function Reviews() {
   return (
-    <section className="py-20 bg-onyx">
+    <section className="py-20 bg-gray-50 dark:bg-onyx transition-colors duration-300">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-serif font-bold text-white mb-4">What Our Travelers Say</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-serif font-bold text-gray-900 dark:text-white mb-4">What Our Travelers Say</h2>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Don't just take our word for it. Read reviews from our satisfied customers who have experienced the world with Nexily.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reviews.map((review) => (
-            <div key={review.id} className="bg-onyx-light rounded-2xl p-8 relative hover:-translate-y-2 transition-transform duration-300 border border-white/5 hover:border-primary/30">
+            <div key={review.id} className="bg-white dark:bg-onyx-light rounded-2xl p-8 relative hover:-translate-y-2 transition-all duration-300 border border-gray-200 dark:border-white/5 hover:border-primary/30 shadow-sm hover:shadow-md">
               <Quote className="absolute top-8 right-8 text-primary/20 w-12 h-12" />
               
               <div className="flex items-center gap-4 mb-6">
@@ -50,8 +50,8 @@ export default function Reviews() {
                   className="w-16 h-16 rounded-full object-cover border-2 border-primary shadow-md"
                 />
                 <div>
-                  <h3 className="font-bold text-white">{review.name}</h3>
-                  <p className="text-sm text-gray-400">{review.role}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white">{review.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{review.role}</p>
                 </div>
               </div>
 
@@ -60,12 +60,12 @@ export default function Reviews() {
                   <Star 
                     key={i} 
                     size={16} 
-                    className={`${i < review.rating ? 'fill-primary text-primary' : 'text-gray-700'}`} 
+                    className={`${i < review.rating ? 'fill-primary text-primary' : 'text-gray-300 dark:text-gray-700'}`} 
                   />
                 ))}
               </div>
 
-              <p className="text-gray-300 leading-relaxed italic">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed italic">
                 "{review.text}"
               </p>
             </div>

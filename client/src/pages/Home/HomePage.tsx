@@ -58,7 +58,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-onyx">
+    <div className="min-h-screen">
       
       {/* Hero Section */}
       <div className="relative h-[600px] overflow-hidden">
@@ -71,7 +71,7 @@ export default function HomePage() {
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/40 z-0"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-onyx z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-gray-50 dark:to-onyx z-0 transition-colors duration-300"></div>
         
         <div className="container-custom h-full flex flex-col justify-center items-center text-center pb-20 relative z-10">
           <motion.h1 
@@ -100,7 +100,7 @@ export default function HomePage() {
         
         {/* Promotional Cards */}
         <div className="mt-16">
-          <h2 className="text-2xl font-serif font-bold text-white mb-6 flex items-center gap-3">
+          <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
             <span className="w-8 h-1 bg-primary rounded-full"></span>
             {getSectionTitle()}
           </h2>
@@ -109,7 +109,7 @@ export default function HomePage() {
               <div 
                 key={i} 
                 onClick={() => handleItemClick(item.query)}
-                className="group cursor-pointer rounded-xl overflow-hidden relative h-64 shadow-md hover:shadow-xl transition-all border border-white/10"
+                className="group cursor-pointer rounded-xl overflow-hidden relative h-64 shadow-md hover:shadow-xl transition-all border border-gray-200 dark:border-white/10"
               >
                 <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
@@ -131,12 +131,12 @@ export default function HomePage() {
              { title: "24/7 Support", desc: "We are here to help you anytime" },
              { title: "Secure Payment", desc: "100% secure payment methods" }
            ].map((f, i) => (
-             <div key={i} className="bg-onyx-light p-6 rounded-xl border border-white/10 shadow-sm text-center hover:-translate-y-1 transition-transform group hover:border-primary/50">
-               <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl group-hover:bg-primary group-hover:text-onyx transition-colors">
+             <div key={i} className="bg-white dark:bg-onyx-light p-6 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm text-center hover:-translate-y-1 transition-transform group hover:border-primary/50">
+               <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl group-hover:bg-primary group-hover:text-white dark:group-hover:text-onyx transition-colors">
                  {i+1}
                </div>
-               <h3 className="font-bold text-white mb-2 font-serif">{f.title}</h3>
-               <p className="text-sm text-gray-400">{f.desc}</p>
+               <h3 className="font-bold text-gray-900 dark:text-white mb-2 font-serif">{f.title}</h3>
+               <p className="text-sm text-gray-500 dark:text-gray-400">{f.desc}</p>
              </div>
            ))}
         </div>

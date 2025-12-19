@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-onyx text-white antialiased font-sans;
+    @apply bg-gray-50 text-gray-900 dark:bg-onyx dark:text-white antialiased font-sans transition-colors duration-300;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif;
@@ -17,19 +17,19 @@
   }
   
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-onyx font-semibold py-2 px-6 rounded-lg transition-colors duration-200;
+    @apply bg-primary hover:bg-primary-dark text-white dark:text-onyx font-semibold py-2 px-6 rounded-lg transition-colors duration-200;
   }
   
   .btn-outline {
-    @apply border border-gray-600 text-gray-300 hover:bg-onyx-light font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-onyx-light font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
 
   .card {
-    @apply bg-onyx-light rounded-xl shadow-lg border border-white/10 overflow-hidden;
+    @apply bg-white dark:bg-onyx-light rounded-xl shadow-lg border border-gray-200 dark:border-white/10 overflow-hidden transition-colors duration-300;
   }
   
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg bg-onyx border border-gray-700 text-white placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all;
+    @apply w-full px-4 py-3 rounded-lg bg-white dark:bg-onyx border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all;
   }
 }
 
@@ -38,12 +38,11 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0F0F0F;
+  @apply bg-gray-100 dark:bg-[#0F0F0F];
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+  @apply bg-gray-300 dark:bg-[#333] rounded-full;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  @apply bg-gray-400 dark:bg-[#444];
 }

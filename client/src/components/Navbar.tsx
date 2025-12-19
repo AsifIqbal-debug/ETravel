@@ -1,11 +1,13 @@
-import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map } from 'lucide-react';
+import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map, Sun } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { useCurrency } from '../context/CurrencyContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar() {
   const location = useLocation();
   const { currency, setCurrency } = useCurrency();
+  const { theme, toggleTheme } = useTheme();
   
   const toggleCurrency = () => {
     setCurrency(currency === 'BDT' ? 'USD' : 'BDT');
@@ -46,15 +48,15 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-onyx/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+    <nav className="bg-white/80 dark:bg-onyx/80 backdrop-blur-md border-b border-gray-200 dark:border-white/10 sticky top-0 z-50 transition-colors duration-300">
       <div className="container-custom">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform duration-300">
-              <Plane className="text-white w-5 h-5 transform -rotate-45" />
+              <Plane className="text-onyx dark:text-white w-5 h-5 transform -rotate-45" />
             </div>
-            <span className="text-2xl font-serif font-bold text-white tracking-tight">Nexily</span>
+            <span className="text-2xl font-serif font-bold text-gray-900 dark:text-white tracking-tight">Nexily</span>
           </Link>
 
           {/* Main Navigation - Desktop */}
@@ -65,10 +67,10 @@ export default function Navbar() {
                   <>
                     <button 
                       className={clsx(
-                        "px-4 py-2 rounded-full font-medium flex items-center gap-2 transition-all duration-200 group-hover:bg-onyx-light",
+                        "px-4 py-2 rounded-full font-medium flex items-center gap-2 transition-all duration-200 group-hover:bg-gray-100 dark:group-hover:bg-onyx-light",
                         item.children.some(child => isActive(child.path))
                           ? "bg-primary/10 text-primary" 
-                          : "text-gray-300 hover:text-primary"
+                          : "text-gray-600 dark:text-gray-300 hover:text-primary"
                       )}
                     >
                       <item.icon size={18} className={item.children.some(child => isActive(child.path)) ? "stroke-[2.5px]" : ""} /> 
@@ -77,14 +79,14 @@ export default function Navbar() {
                     </button>
                     
                     {/* Dropdown Menu */}
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-onyx-light rounded-xl shadow-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50 overflow-hidden">
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-onyx-light rounded-xl shadow-xl border border-gray-200 dark:border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50 overflow-hidden">
                       {item.children.map((child) => (
                         <Link
                           key={child.label}
                           to={child.path}
                           className={clsx(
-                            "block px-4 py-3 text-sm font-medium hover:bg-onyx flex items-center gap-3 transition-colors",
-                            isActive(child.path) ? "text-primary bg-primary/5" : "text-gray-300"
+                            "block px-4 py-3 text-sm font-medium hover:bg-gray-50 dark:hover:bg-onyx flex items-center gap-3 transition-colors",
+                            isActive(child.path) ? "text-primary bg-primary/5" : "text-gray-600 dark:text-gray-300"
                           )}
                         >
                           <child.icon size={16} />
@@ -100,7 +102,7 @@ export default function Navbar() {
                       "px-4 py-2 rounded-full font-medium flex items-center gap-2 transition-all duration-200",
                       isActive(item.path) 
                         ? "bg-primary/10 text-primary" 
-                        : "text-gray-300 hover:bg-onyx-light hover:text-primary"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-onyx-light hover:text-primary"
                     )}
                   >
                     <item.icon size={18} className={isActive(item.path) ? "stroke-[2.5px]" : ""} /> 
@@ -113,6 +115,13 @@ export default function Navbar() {
 
           {/* Right Side */}
           <div className="flex items-center gap-3">
+            <button 
+              onClick={toggleTheme}
+              className="hidden sm:flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 w-9 h-9 rounded-full transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button 
               onClick={toggleCurrency}
               className="hidden sm:flex items-center gap-2 text-gray-300 cursor-pointer hover:bg-white/5 px-3 py-1.5 rounded-full transition-colors border border-transparent hover:border-white/10"

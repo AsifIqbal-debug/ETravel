@@ -36,12 +36,12 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="bg-onyx min-h-screen pb-20">
+    <div className="bg-gray-50 dark:bg-onyx min-h-screen pb-20 transition-colors duration-300">
       {/* Hero Section */}
-      <div className="bg-onyx-light border-b border-white/10 py-16">
+      <div className="bg-white dark:bg-onyx-light border-b border-gray-200 dark:border-white/10 py-16 transition-colors duration-300">
         <div className="container-custom text-center">
-          <h1 className="text-4xl font-serif font-bold text-white mb-6">Frequently Asked Questions</h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-serif font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Find answers to common questions about our services, bookings, and policies.
           </p>
         </div>
@@ -52,17 +52,17 @@ export default function FAQPage() {
           {faqs.map((faq, index) => (
             <div 
               key={index} 
-              className="bg-onyx-light border border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-white/20"
+              className="bg-white dark:bg-onyx-light border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary/30 dark:hover:border-white/20 shadow-sm"
             >
               <button
                 className="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none"
                 onClick={() => toggleFAQ(index)}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${openIndex === index ? 'bg-primary text-onyx' : 'bg-white/5 text-gray-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${openIndex === index ? 'bg-primary text-white dark:text-onyx' : 'bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400'}`}>
                     <HelpCircle size={18} />
                   </div>
-                  <span className={`font-medium text-lg ${openIndex === index ? 'text-white' : 'text-gray-300'}`}>
+                  <span className={`font-medium text-lg ${openIndex === index ? 'text-primary' : 'text-gray-900 dark:text-gray-300'}`}>
                     {faq.question}
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export default function FAQPage() {
               <div 
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
               >
-                <div className="px-6 pb-6 pt-0 pl-[4.5rem] text-gray-400 leading-relaxed border-t border-white/5 mt-2">
+                <div className="px-6 pb-6 pt-0 pl-[4.5rem] text-gray-600 dark:text-gray-400 leading-relaxed border-t border-gray-100 dark:border-white/5 mt-2">
                   {faq.answer}
                 </div>
               </div>
@@ -85,10 +85,10 @@ export default function FAQPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-gray-400 mb-4">Still have questions?</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Still have questions?</p>
           <a 
             href="/contact" 
-            className="inline-block bg-white/5 hover:bg-white/10 text-white font-medium px-8 py-3 rounded-full border border-white/10 hover:border-primary/50 transition-all"
+            className="inline-block bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 text-primary dark:text-white font-medium px-8 py-3 rounded-full border border-gray-200 dark:border-white/10 hover:border-primary transition-all shadow-sm"
           >
             Contact Support
           </a>
