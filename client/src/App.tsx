@@ -7,8 +7,6 @@ import PrivacyPage from './pages/Privacy/PrivacyPage';
 import TermsPage from './pages/Terms/TermsPage';
 import ContactPage from './pages/Contact/ContactPage';
 import FAQPage from './pages/FAQ/FAQPage';
-import { CurrencyProvider } from './context/CurrencyContext';
-import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
