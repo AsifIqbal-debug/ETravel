@@ -4,7 +4,7 @@ import { listHotels, type Hotel } from '../../services/api/hotels';
 import { listHolidays, type Holiday } from '../../services/api/holidays';
 import { listVisas, type Visa } from '../../services/api/visas';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X, MapPin, Star, Clock, Check, Bus, Car, Plane } from 'lucide-react';
 import { useCurrency } from '../../context/CurrencyContext';
 import SearchFilters from '../../components/SearchFilters';
 import clsx from 'clsx';

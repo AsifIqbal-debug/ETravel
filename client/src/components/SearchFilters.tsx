@@ -1,4 +1,4 @@
-import { Plane, Clock, MapPin, Star, Check, Bus, Car, Calendar } from 'lucide-react';
+import { Clock, MapPin, Star, Check, Calendar } from 'lucide-react';
 
 interface SearchFiltersProps {
   type: string;

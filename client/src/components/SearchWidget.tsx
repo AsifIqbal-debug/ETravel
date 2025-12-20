@@ -30,6 +30,7 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   const [hotelLocation, setHotelLocation] = useState('Cox\'s Bazar');
   const [checkIn] = useState('18 Dec 25');
   const [checkOut] = useState('20 Dec 25');
+  const [hotelClass, setHotelClass] = useState('Luxury');
   
   // Holiday State
   const [holidayDest, setHolidayDest] = useState('Maldives');
