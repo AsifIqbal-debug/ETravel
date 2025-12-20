@@ -4,13 +4,16 @@ import { listHotels, type Hotel } from '../../services/api/hotels';
 import { listHolidays, type Holiday } from '../../services/api/holidays';
 import { listVisas, type Visa } from '../../services/api/visas';
 import { useSearchParams } from 'react-router-dom';
-import { Plane, Clock, MapPin, Star, Check, Bus, Car, Calendar } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { useCurrency } from '../../context/CurrencyContext';
+import SearchFilters from '../../components/SearchFilters';
+import clsx from 'clsx';
 
 export default function SearchPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const type = searchParams.get('type') || 'flight';
   const { formatPrice } = useCurrency();
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   
   // State for different results
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -23,6 +26,16 @@ export default function SearchPage() {
   const [timeFilter, setTimeFilter] = useState('');
   const [tripType, setTripType] = useState('one-way');
   const [returnDate, setReturnDate] = useState('');
+
+  const updateFilter = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    setSearchParams(newParams);
+  };
 
   useEffect(() => {
     // Sync state with URL params when they change
@@ -38,7 +51,20 @@ export default function SearchPage() {
         setFlights(data);
       } else if (type === 'hotel') {
         const location = searchParams.get('location') || '';
-        const data = await listHotels(location);
+        const hotelClass = searchParams.get('class') || '';
+        let data = await listHotels(location);
+        
+        // Client-side filtering based on class
+        if (hotelClass) {
+          if (hotelClass === 'Luxury') {
+            data = data.filter(h => h.rating >= 5);
+          } else if (hotelClass === 'Business') {
+            data = data.filter(h => h.rating >= 4 && h.rating < 5);
+          } else if (hotelClass === 'Economy') {
+            data = data.filter(h => h.rating < 4);
+          }
+        }
+        
         setHotels(data);
       } else if (type === 'holiday') {
         const dest = searchParams.get('dest') || '';
@@ -91,156 +117,75 @@ export default function SearchPage() {
       </div>
 
       <div className="container-custom py-8">
+        <div className="flex justify-between items-center lg:hidden mb-6">
+          <h2 className="font-bold text-gray-900 dark:text-white">Filters</h2>
+          <button 
+            onClick={() => setIsMobileFilterOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium"
+          >
+            <SlidersHorizontal size={18} /> Filter
+          </button>
+        </div>
+        {/* Mobile Filter Drawer */}
+        <div 
+          className={clsx(
+            "fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 lg:hidden",
+            isMobileFilterOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+          )}
+          onClick={() => setIsMobileFilterOpen(false)}
+        />
+        <div 
+          className={clsx(
+            "fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-onyx shadow-2xl z-50 transform transition-transform duration-300 lg:hidden overflow-y-auto",
+            isMobileFilterOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          <div className="p-5">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-bold text-lg text-gray-900 dark:text-white">Filters</h2>
+              <button 
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <SearchFilters 
+              type={type}
+              searchParams={searchParams}
+              updateFilter={updateFilter}
+              tripType={tripType}
+              setTripType={setTripType}
+              fromInput={fromInput}
+              setFromInput={setFromInput}
+              toInput={toInput}
+              setToInput={setToInput}
+              returnDate={returnDate}
+              setReturnDate={setReturnDate}
+              timeFilter={timeFilter}
+              setTimeFilter={setTimeFilter}
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar - Simplified for now */}
           <div className="hidden lg:block space-y-6">
-             {type === 'flight' && (
-               <div className="bg-white dark:bg-onyx-light p-5 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm space-y-4 transition-colors duration-300">
-                  <h3 className="font-bold text-gray-900 dark:text-white mb-2">Search Flight</h3>
-                  
-                  {/* Trip Type Selection */}
-                  <div className="flex flex-wrap gap-3 mb-2">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="tripType" 
-                        value="one-way" 
-                        checked={tripType === 'one-way'} 
-                        onChange={(e) => setTripType(e.target.value)}
-                        className="text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600 accent-primary"
-                      />
-                      <span className="text-sm text-gray-600 dark:text-gray-300">One Way</span>
-                    </label>
-                    
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="tripType" 
-                        value="round-trip" 
-                        checked={tripType === 'round-trip'} 
-                        onChange={(e) => setTripType(e.target.value)}
-                        className="text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600 accent-primary"
-                      />
-                      <span className="text-sm text-gray-600 dark:text-gray-300">Round Trip</span>
-                    </label>
-
-                    {searchParams.get('category') !== 'hajj-umrah' && (
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="tripType" 
-                          value="multi-city" 
-                          checked={tripType === 'multi-city'} 
-                          onChange={(e) => setTripType(e.target.value)}
-                          className="text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600 accent-primary"
-                        />
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Multi City</span>
-                      </label>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">From</label>
-                    <div className="relative">
-                      <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-                      <input 
-                        type="text" 
-                        value={fromInput}
-                        onChange={(e) => setFromInput(e.target.value)}
-                        placeholder="Departure City"
-                        className="w-full bg-gray-50 dark:bg-onyx border border-gray-200 dark:border-white/10 rounded-lg py-2 pl-9 pr-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-primary/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">To</label>
-                    <div className="relative">
-                      <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-                      <input 
-                        type="text" 
-                        value={toInput}
-                        onChange={(e) => setToInput(e.target.value)}
-                        placeholder="Destination City"
-                        className="w-full bg-gray-50 dark:bg-onyx border border-gray-200 dark:border-white/10 rounded-lg py-2 pl-9 pr-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-primary/50"
-                      />
-                    </div>
-                  </div>
-
-                  {tripType === 'round-trip' && (
-                    <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Return Date</label>
-                      <div className="relative">
-                        <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-                        <input 
-                          type="date" 
-                          value={returnDate}
-                          onChange={(e) => setReturnDate(e.target.value)}
-                          className="w-full bg-gray-50 dark:bg-onyx border border-gray-200 dark:border-white/10 rounded-lg py-2 pl-9 pr-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-primary/50 dark:[&::-webkit-calendar-picker-indicator]:invert"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Departure Time</label>
-                    <div className="relative">
-                      <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-                      <select 
-                        value={timeFilter}
-                        onChange={(e) => setTimeFilter(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-onyx border border-gray-200 dark:border-white/10 rounded-lg py-2 pl-9 pr-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-primary/50 appearance-none"
-                      >
-                        <option value="">Any Time</option>
-                        <option value="morning">Morning (6AM - 12PM)</option>
-                        <option value="afternoon">Afternoon (12PM - 6PM)</option>
-                        <option value="evening">Evening (6PM - 12AM)</option>
-                        <option value="night">Night (12AM - 6AM)</option>
-                      </select>
-                      <Check size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none opacity-50" />
-                    </div>
-                  </div>
-               </div>
-             )}
-
-             <div className="bg-white dark:bg-onyx-light p-5 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-300">
-               <h3 className="font-bold text-gray-900 dark:text-white mb-4">Price Range</h3>
-               <input type="range" className="w-full accent-primary bg-gray-200 dark:bg-gray-700" />
-               <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
-                 <span>Min</span>
-                 <span>Max</span>
-               </div>
-             </div>
-             
-             {type === 'flight' && (
-               <div className="bg-white dark:bg-onyx-light p-5 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-300">
-                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Stops</h3>
-                 <div className="space-y-2">
-                   <label className="flex items-center gap-2">
-                     <input type="checkbox" className="rounded text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600" defaultChecked />
-                     <span className="text-sm text-gray-600 dark:text-gray-300">Non Stop</span>
-                   </label>
-                   <label className="flex items-center gap-2">
-                     <input type="checkbox" className="rounded text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600" />
-                     <span className="text-sm text-gray-600 dark:text-gray-300">1 Stop</span>
-                   </label>
-                 </div>
-               </div>
-             )}
-
-             {type === 'hotel' && (
-               <div className="bg-white dark:bg-onyx-light p-5 rounded-xl border border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-300">
-                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Star Rating</h3>
-                 <div className="space-y-2">
-                   {[5, 4, 3, 2].map(star => (
-                     <label key={star} className="flex items-center gap-2">
-                       <input type="checkbox" className="rounded text-primary focus:ring-primary bg-gray-100 dark:bg-onyx border-gray-300 dark:border-gray-600" />
-                       <span className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">{star} <Star size={12} className="fill-primary text-primary"/></span>
-                     </label>
-                   ))}
-                 </div>
-               </div>
-             )}
+             <SearchFilters 
+              type={type}
+              searchParams={searchParams}
+              updateFilter={updateFilter}
+              tripType={tripType}
+              setTripType={setTripType}
+              fromInput={fromInput}
+              setFromInput={setFromInput}
+              toInput={toInput}
+              setToInput={setToInput}
+              returnDate={returnDate}
+              setReturnDate={setReturnDate}
+              timeFilter={timeFilter}
+              setTimeFilter={setTimeFilter}
+            />
           </div>
 
           {/* Results List */}

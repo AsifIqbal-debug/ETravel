@@ -1,4 +1,5 @@
-import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map, Sun } from 'lucide-react';
+import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map, Sun, X } from 'lucide-react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { useCurrency } from '../context/CurrencyContext';
@@ -8,6 +9,11 @@ export default function Navbar() {
   const location = useLocation();
   const { currency, setCurrency } = useCurrency();
   const { theme, toggleTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
   
   const toggleCurrency = () => {
     setCurrency(currency === 'BDT' ? 'USD' : 'BDT');
@@ -132,8 +138,111 @@ export default function Navbar() {
             <button className="btn-primary py-2 px-6 text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all">
               Login
             </button>
-            <button className="md:hidden p-2 text-gray-300 hover:bg-white/5 rounded-lg">
-              <Menu size={24} />
+            <button 
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <div 
+        className={clsx(
+          "fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 md:hidden",
+          isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+        )}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu Drawer */}
+      <div 
+        className={clsx(
+          "fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-onyx shadow-2xl z-50 transform transition-transform duration-300 md:hidden overflow-y-auto",
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-8">
+            <span className="text-xl font-serif font-bold text-gray-900 dark:text-white">Menu</span>
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {navItems.map((item) => (
+              <div key={item.label} className="space-y-2">
+                {item.children ? (
+                  <div className="space-y-2">
+                    <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2 px-4 py-2">
+                      <item.icon size={18} />
+                      {item.label}
+                    </div>
+                    <div className="pl-4 space-y-1 border-l-2 border-gray-100 dark:border-white/5 ml-4">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.label}
+                          to={child.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={clsx(
+                            "block px-4 py-2 text-sm rounded-lg transition-colors flex items-center gap-2",
+                            isActive(child.path) 
+                              ? "text-primary bg-primary/5 font-medium" 
+                              : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5"
+                          )}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={clsx(
+                      "flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors",
+                      isActive(item.path) 
+                        ? "text-primary bg-primary/5" 
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+                    )}
+                  >
+                    <item.icon size={18} />
+                    {item.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/10 space-y-4">
+            <div className="flex items-center justify-between px-4">
+              <span className="text-gray-600 dark:text-gray-300">Theme</span>
+              <button 
+                onClick={toggleTheme}
+                className="flex items-center justify-center text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-white/5 w-9 h-9 rounded-full"
+              >
+                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
+            </div>
+            <div className="flex items-center justify-between px-4">
+              <span className="text-gray-600 dark:text-gray-300">Currency</span>
+              <button 
+                onClick={toggleCurrency}
+                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-full text-sm font-medium"
+              >
+                <Globe size={16} />
+                {currency}
+              </button>
+            </div>
+            <button className="w-full btn-primary py-3 rounded-xl shadow-lg shadow-primary/20">
+              Login
             </button>
           </div>
         </div>

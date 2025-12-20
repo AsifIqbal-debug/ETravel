@@ -302,7 +302,7 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
         {/* HOTEL FORM */}
         {activeTab === 'hotel' && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end pt-4">
-             <div className="md:col-span-4 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+             <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
                 <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <MapPin size={12} /> City/Accommodation
                 </label>
@@ -311,12 +311,12 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
                   value={hotelLocation}
                   onChange={(e) => setHotelLocation(e.target.value)}
                   className="w-full font-bold text-gray-900 dark:text-white bg-transparent outline-none placeholder-gray-400 dark:placeholder-gray-600" 
-                  placeholder="Enter city or accommodation name"
+                  placeholder="Enter city"
                 />
                 <span className="text-xs text-gray-400 dark:text-gray-500">Bangladesh</span>
              </div>
              
-             <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+             <div className="md:col-span-2 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
                 <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Check In
                 </label>
@@ -324,12 +324,28 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
                 <span className="text-xs text-gray-400 dark:text-gray-500">Wednesday</span>
              </div>
 
-             <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+             <div className="md:col-span-2 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
                 <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Check Out
                 </label>
                 <div className="font-bold text-gray-900 dark:text-white">{checkOut}</div>
                 <span className="text-xs text-gray-400 dark:text-gray-500">Friday</span>
+             </div>
+
+             <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
+                <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
+                  <Building2 size={12} /> Class
+                </label>
+                <select 
+                  value={hotelClass}
+                  onChange={(e) => setHotelClass(e.target.value)}
+                  className="w-full font-bold text-gray-900 dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
+                >
+                  <option value="Economy" className="text-gray-900 bg-white dark:bg-onyx">Economy</option>
+                  <option value="Business" className="text-gray-900 bg-white dark:bg-onyx">Business</option>
+                  <option value="Luxury" className="text-gray-900 bg-white dark:bg-onyx">Luxury</option>
+                </select>
+                <span className="text-xs text-gray-400 dark:text-gray-500">Select Tier</span>
              </div>
 
              <SearchButton onClick={handleSearch} />
