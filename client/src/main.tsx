@@ -4,13 +4,16 @@ import App from './App'
 import './index.css'
 import { CurrencyProvider } from './context/CurrencyContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { AuthProvider } from './context/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <CurrencyProvider>
-        <App />
-      </CurrencyProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <CurrencyProvider>
+          <App />
+        </CurrencyProvider>
+      </ThemeProvider>
+    </AuthProvider>
   </React.StrictMode>,
 )

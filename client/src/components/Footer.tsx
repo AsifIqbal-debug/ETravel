@@ -35,6 +35,9 @@ export default function Footer() {
               <li>
                 <Link to="/terms" className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm">Terms of Service</Link>
               </li>
+              <li>
+                <Link to="/admin/login" className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors text-sm">Admin Portal</Link>
+              </li>
             </ul>
           </div>
 

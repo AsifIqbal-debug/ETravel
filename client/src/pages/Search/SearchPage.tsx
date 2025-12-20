@@ -23,6 +23,7 @@ export default function SearchPage() {
 
   const [fromInput, setFromInput] = useState(searchParams.get('from') || '');
   const [toInput, setToInput] = useState(searchParams.get('to') || '');
+  const [searchDate, setSearchDate] = useState(searchParams.get('date') || '');
   const [timeFilter, setTimeFilter] = useState('');
   const [tripType, setTripType] = useState('one-way');
   const [returnDate, setReturnDate] = useState('');
@@ -41,13 +42,14 @@ export default function SearchPage() {
     // Sync state with URL params when they change
     setFromInput(searchParams.get('from') || '');
     setToInput(searchParams.get('to') || '');
+    setSearchDate(searchParams.get('date') || '');
   }, [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (type === 'flight') {
         const category = searchParams.get('category') || '';
-        const data = await listFlights(fromInput, category, toInput, timeFilter, tripType, returnDate);
+        const data = await listFlights(fromInput, category, toInput, timeFilter, tripType, returnDate, searchDate);
         setFlights(data);
       } else if (type === 'hotel') {
         const location = searchParams.get('location') || '';
@@ -77,7 +79,7 @@ export default function SearchPage() {
       }
     };
     fetchData();
-  }, [searchParams, type, fromInput, toInput, timeFilter, tripType, returnDate]);
+  }, [searchParams, type, fromInput, toInput, timeFilter, tripType, returnDate, searchDate]);
 
   const getHeaderTitle = () => {
     const category = searchParams.get('category');

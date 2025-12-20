@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+// @ts-ignore
+import csv from 'csv-parser';
 import { Flight } from './models/Flight';
 import { Hotel } from './models/Hotel';
 import { Holiday } from './models/Holiday';
@@ -274,8 +278,66 @@ const seedDatabase = async () => {
     await Holiday.deleteMany({});
     await Visa.deleteMany({});
     
-    // Seed new data
-    await Flight.insertMany(seedFlights);
+    // Seed CSV data
+    const flights: any[] = [];
+    const csvPath = path.resolve(process.cwd(), '../../Flight_Price_Dataset_of_Bangladesh.csv');
+    console.log('Looking for CSV at:', csvPath);
+    
+    if (fs.existsSync(csvPath)) {
+      console.log('Reading flights from CSV...');
+      await new Promise((resolve, reject) => {
+        fs.createReadStream(csvPath)
+          .pipe(csv())
+          .on('data', (row: any) => {
+            try {
+              const depDateTime = new Date(row['Departure Date & Time']);
+              const arrDateTime = new Date(row['Arrival Date & Time']);
+              
+              if (isNaN(depDateTime.getTime())) return;
+
+              let duration = '0h 0m';
+              if (row['Duration (hrs)']) {
+                const hours = Math.floor(parseFloat(row['Duration (hrs)']));
+                const minutes = Math.round((parseFloat(row['Duration (hrs)']) % 1) * 60);
+                duration = `${hours}h ${minutes}m`;
+              }
+              
+              flights.push({
+                airline: row.Airline,
+                logo: row.Airline ? row.Airline.substring(0, 2).toUpperCase() : 'FL',
+                origin: row['Source Name'] || row.Source,
+                originCode: row.Source,
+                destination: row['Destination Name'] || row.Destination,
+                destinationCode: row.Destination,
+                departureTime: depDateTime.toTimeString().substring(0, 5),
+                departureDate: depDateTime,
+                arrivalTime: arrDateTime.toTimeString().substring(0, 5),
+                arrivalDate: arrDateTime,
+                duration: duration,
+                price: parseFloat(row['Total Fare (BDT)']) || 0,
+                currency: 'BDT',
+                stops: row.Stopovers === 'Direct' ? 0 : (parseInt(row.Stopovers) || 1),
+                type: (row.Source === 'DAC' && (row.Destination === 'CXB' || row.Destination === 'CGP' || row.Destination === 'ZYL' || row.Destination === 'RJH' || row.Destination === 'BZL' || row.Destination === 'JSR' || row.Destination === 'SPD')) || 
+                      (row.Destination === 'DAC' && (row.Source === 'CXB' || row.Source === 'CGP' || row.Source === 'ZYL' || row.Source === 'RJH' || row.Source === 'BZL' || row.Source === 'JSR' || row.Source === 'SPD')) 
+                      ? 'domestic' : 'international',
+                tripType: ['one-way', 'round-trip']
+              });
+            } catch (err) {
+              console.error('Error parsing row:', err);
+            }
+          })
+          .on('end', resolve)
+          .on('error', reject);
+      });
+    }
+
+    if (flights.length > 0) {
+      await Flight.insertMany(flights);
+      console.log(`Seeded ${flights.length} flights from CSV`);
+    } else {
+      console.log('CSV not found or empty, using default seeds');
+      await Flight.insertMany(seedFlights);
+    }
     await Hotel.insertMany(seedHotels);
     await Holiday.insertMany(seedHolidays);
     await Visa.insertMany(seedVisas);
@@ -289,7 +351,11 @@ const seedDatabase = async () => {
 // Call seed function on connection
 mongoose.connection.once('open', seedDatabase);
 
+import authRoutes from './routes/authRoutes';
+
 // Routes
+app.use('/api/auth', authRoutes);
+
 app.get('/', (req, res) => {
   res.send('Nexily API is running');
 });
@@ -297,7 +363,7 @@ app.get('/', (req, res) => {
 // Flights API
 app.get('/api/flights', async (req, res) => {
   try {
-    const { from, to, category, time, tripType } = req.query;
+    const { from, to, category, time, tripType, date } = req.query;
     let query: any = {};
     
     if (category) {
@@ -306,6 +372,22 @@ app.get('/api/flights', async (req, res) => {
 
     if (tripType) {
       query.tripType = { $in: [tripType] };
+    }
+
+    if (date) {
+      const searchDate = new Date(date as string);
+      if (!isNaN(searchDate.getTime())) {
+        const startOfDay = new Date(searchDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date(searchDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        query.departureDate = {
+          $gte: startOfDay,
+          $lte: endOfDay
+        };
+      }
     }
 
     if (time) {

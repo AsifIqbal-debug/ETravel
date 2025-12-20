@@ -1,18 +1,25 @@
-import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map, Sun, X } from 'lucide-react';
+import { Plane, Building2, Palmtree, CreditCard, Menu, Globe, Bus, Car, ChevronDown, Moon, Map, Sun, X, LogIn, User } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { useCurrency } from '../context/CurrencyContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const location = useLocation();
   const { currency, setCurrency } = useCurrency();
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const toggleProfile = () => {
+    setIsProfileOpen(!isProfileOpen);
   };
   
   const toggleCurrency = () => {
@@ -135,9 +142,41 @@ export default function Navbar() {
               <Globe size={18} />
               <span className="text-sm font-medium">{currency}</span>
             </button>
-            <button className="btn-primary py-2 px-6 text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all">
-              Login
-            </button>
+            {isAuthenticated ? (
+              <div className="relative">
+                <button 
+                  onClick={toggleProfile}
+                  className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 px-3 py-1.5 rounded-full transition-colors"
+                >
+                  <User size={18} />
+                  <span className="text-sm font-medium hidden sm:inline">{user?.name?.split(' ')[0]}</span>
+                  <ChevronDown size={14} />
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-onyx-light border border-gray-200 dark:border-white/10 rounded-xl shadow-xl py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100 dark:border-white/10">
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{user?.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="btn-primary py-2 px-6 text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 transform hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                <LogIn size={16} />
+                <span>Login</span>
+              </Link>
+            )}
             <button 
               onClick={toggleMobileMenu}
               className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-colors"
@@ -241,9 +280,36 @@ export default function Navbar() {
                 {currency}
               </button>
             </div>
-            <button className="w-full btn-primary py-3 rounded-xl shadow-lg shadow-primary/20">
-              Login
-            </button>
+            {isAuthenticated ? (
+              <div className="pt-2 border-t border-gray-100 dark:border-white/10">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 dark:text-white">{user?.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    logout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full py-3 text-center text-red-600 bg-red-50 dark:bg-red-900/10 rounded-xl font-medium transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <Link 
+                to="/login" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block w-full btn-primary py-3 rounded-xl shadow-lg shadow-primary/20 text-center"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

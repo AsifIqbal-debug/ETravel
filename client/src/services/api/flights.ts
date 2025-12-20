@@ -17,7 +17,7 @@ export interface Flight {
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
-export const listFlights = async (from?: string, category?: string, to?: string, time?: string, tripType?: string, returnDate?: string): Promise<Flight[]> => {
+export const listFlights = async (from?: string, category?: string, to?: string, time?: string, tripType?: string, returnDate?: string, date?: string): Promise<Flight[]> => {
   try {
     const params = new URLSearchParams();
     if (from) params.append('from', from);
@@ -26,6 +26,7 @@ export const listFlights = async (from?: string, category?: string, to?: string,
     if (time) params.append('time', time);
     if (tripType) params.append('tripType', tripType);
     if (returnDate) params.append('returnDate', returnDate);
+    if (date) params.append('date', date);
     
     const response = await fetch(`${API_URL}/flights?${params.toString()}`);
     if (!response.ok) throw new Error('Failed to fetch flights');

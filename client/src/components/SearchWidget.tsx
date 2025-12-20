@@ -15,6 +15,7 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   const [tripType, setTripType] = useState('round');
   const [flightFrom, setFlightFrom] = useState('Dhaka (DAC)');
   const [flightTo, setFlightTo] = useState('Cox\'s Bazar (CXB)');
+  const [flightDate, setFlightDate] = useState(new Date().toISOString().split('T')[0]);
   
   // Transportation State
   const [transportationSubTab, setTransportationSubTab] = useState<'bus' | 'car'>('bus');
@@ -48,7 +49,7 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
   const handleSearch = () => {
     let query = '';
     if (activeTab === 'flight') {
-      query = `?type=flight&from=${encodeURIComponent(flightFrom)}&to=${encodeURIComponent(flightTo)}`;
+      query = `?type=flight&from=${encodeURIComponent(flightFrom)}&to=${encodeURIComponent(flightTo)}&date=${encodeURIComponent(flightDate)}`;
     } else if (activeTab === 'transportation') {
       if (transportationSubTab === 'bus') {
         query = `?type=bus&from=${encodeURIComponent(busFrom)}&to=${encodeURIComponent(busTo)}`;
@@ -278,12 +279,19 @@ export default function SearchWidget({ onTabChange, initialTab = 'flight' }: Sea
               </div>
 
               {/* Date */}
-              <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer">
+              <div className="md:col-span-3 border border-gray-200 dark:border-white/10 rounded-lg p-3 hover:border-primary transition-colors">
                 <label className="block text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center gap-1">
                   <Calendar size={12} /> Journey Date
                 </label>
-                <div className="font-bold text-gray-900 dark:text-white">18 Dec 25</div>
-                <span className="text-xs text-gray-400 dark:text-gray-500">Thursday</span>
+                <input 
+                  type="date" 
+                  value={flightDate}
+                  onChange={(e) => setFlightDate(e.target.value)}
+                  className="w-full font-bold text-gray-900 dark:text-white bg-transparent outline-none cursor-pointer" 
+                />
+                <span className="text-xs text-gray-400 dark:text-gray-500">
+                  {new Date(flightDate).toLocaleDateString('en-US', { weekday: 'long' })}
+                </span>
               </div>
 
               {/* Travelers */}
